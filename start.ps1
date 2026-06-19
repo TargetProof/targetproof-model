@@ -2,7 +2,8 @@
 # Usage: powershell -ExecutionPolicy Bypass -File start.ps1
 
 param(
-    [int]$Port = 8765
+    [int]$Port = 8765,
+    [switch]$Reset
 )
 
 $ErrorActionPreference = "Stop"
@@ -55,6 +56,16 @@ function Resolve-SafeFilePath([string]$Root, [string]$RelativePath) {
     return $candidate
 }
 
+function Stop-PortListeners([int]$ListenPort) {
+    Get-NetTCPConnection -LocalPort $ListenPort -State Listen -ErrorAction SilentlyContinue |
+        Where-Object { $_.LocalAddress -eq '127.0.0.1' -or $_.LocalAddress -eq '::1' } |
+        ForEach-Object {
+            if ($_.OwningProcess -eq $PID) { return }
+            Write-Host "  Stopping process on port $ListenPort (PID $($_.OwningProcess))..." -ForegroundColor DarkGray
+            Stop-Process -Id $_.OwningProcess -Force -ErrorAction SilentlyContinue
+        }
+}
+
 function Stop-StaleSanctuaryServers([int]$ListenPort) {
     $mine = $PID
     $ancestors = @($mine)
@@ -77,6 +88,8 @@ function Stop-StaleSanctuaryServers([int]$ListenPort) {
             Write-Host "  Stopping previous Sanctuary server (PID $($_.ProcessId))..." -ForegroundColor DarkGray
             Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue
         }
+
+    Stop-PortListeners $ListenPort
     Start-Sleep -Milliseconds 1200
 }
 
@@ -108,8 +121,14 @@ $listener = New-Object System.Net.HttpListener
 $prefix = "http://127.0.0.1:$Port/"
 $listener.Prefixes.Add($prefix)
 
+if ($Reset) {
+    Write-Host ""
+    Write-Host "  Resetting port $Port..." -ForegroundColor Yellow
+    Stop-StaleSanctuaryServers $Port
+}
+
 if (Test-PortListening $Port) {
-    if (Test-SanctuaryServerResponding $Port) {
+    if (-not $Reset -and (Test-SanctuaryServerResponding $Port)) {
         Write-Host ""
         Write-Host "  Sanctuary Model is already running on port $Port." -ForegroundColor Green
         Write-Host "  Serving from another window - opening the app." -ForegroundColor DarkGray

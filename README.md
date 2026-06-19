@@ -90,15 +90,9 @@ Publish the Standard Edition to `../targetproof-model`:
 
 ---
 
-## Editions
+## Assistant
 
-| Edition | Assistant | Knowledge |
-|---------|-----------|-----------|
-| **Standard** | Guided (rule-based) | — |
-| **AI** | On-device Llama via WebGPU | — |
-| **Connected** | On-device Llama | Calendar, network inventory; email/phone planned |
-
-All editions share the same 156 controls, threat spectrum, and roadmap. The framework sharpens over time — the deliverable stays lean.
+The guided assistant answers from your scored intake, controls, and summary using structured, rule-based analysis — no language model, no cloud, no external connectors.
 
 ---
 

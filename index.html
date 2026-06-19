@@ -28,10 +28,6 @@
             margin: 0;
             font-family: 'Segoe UI', system-ui, sans-serif;
             background-color: var(--bg);
-            background-image: linear-gradient(rgba(10, 12, 20, 0.82), rgba(10, 12, 20, 0.92)), url('assets/brand/bg-family-play.jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            background-position: center;
             color: var(--text);
             line-height: 1.5;
             -webkit-font-smoothing: antialiased;
@@ -64,9 +60,8 @@
         }
 
         .card {
-            background: rgba(20, 26, 37, 0.88); border: 1px solid var(--border);
+            background: var(--card); border: 1px solid var(--border);
             border-radius: 1rem; padding: 1.25rem; margin-bottom: 1rem;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
         }
         .card-meta { font-size: 0.75rem; color: var(--muted); margin-bottom: 0.5rem; }
         .card-text { color: var(--dim); margin: 0 0 0.75rem; }
@@ -140,7 +135,7 @@
         #save-indicator { font-size: 0.75rem; color: var(--muted); margin-top: 1rem; }
 
         footer {
-            border-top: 1px solid var(--border); padding: 1.75rem 1.5rem;
+            padding: 2.5rem 1.5rem 1.75rem;
             font-size: 0.75rem; color: var(--muted);
         }
         .footer-inner { max-width: 1200px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 0.75rem; text-align: center; }

@@ -1035,25 +1035,45 @@
         if (overview) overview.classList.toggle('nav-active', view === 'setup');
     }
 
+    function closeNavMenus(except) {
+        document.querySelectorAll('.nav-group.is-open').forEach(g => {
+            if (except && g === except) return;
+            g.classList.remove('is-open');
+            const t = g.querySelector('.nav-group-btn');
+            if (t) t.setAttribute('aria-expanded', 'false');
+        });
+    }
+
     function bindPortalNav() {
+        document.querySelectorAll('.nav-group').forEach(group => {
+            group.addEventListener('mouseenter', () => {
+                closeNavMenus(group);
+                group.classList.add('is-open');
+                const btn = group.querySelector('.nav-group-btn');
+                if (btn) btn.setAttribute('aria-expanded', 'true');
+            });
+            group.addEventListener('mouseleave', () => {
+                group.classList.remove('is-open');
+                const btn = group.querySelector('.nav-group-btn');
+                if (btn) btn.setAttribute('aria-expanded', 'false');
+            });
+        });
+
         document.querySelectorAll('.nav-group-btn').forEach(btn => {
             btn.addEventListener('click', e => {
+                e.preventDefault();
                 e.stopPropagation();
                 const group = btn.closest('.nav-group');
-                const open = group.classList.toggle('is-open');
-                document.querySelectorAll('.nav-group').forEach(g => {
-                    if (g !== group) g.classList.remove('is-open');
-                });
-                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                const isOpen = group.classList.contains('is-open');
+                closeNavMenus();
+                if (!isOpen) {
+                    group.classList.add('is-open');
+                    btn.setAttribute('aria-expanded', 'true');
+                }
             });
         });
-        document.addEventListener('click', () => {
-            document.querySelectorAll('.nav-group.is-open').forEach(g => {
-                g.classList.remove('is-open');
-                const t = g.querySelector('.nav-group-btn');
-                if (t) t.setAttribute('aria-expanded', 'false');
-            });
-        });
+
+        document.addEventListener('click', () => closeNavMenus());
         document.querySelectorAll('.nav-menu').forEach(menu => {
             menu.addEventListener('click', e => e.stopPropagation());
         });
